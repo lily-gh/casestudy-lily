@@ -1,0 +1,12 @@
+package com.lotto24.accountbalanceservice.controller
+
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+class TenantController {
+    @GetMapping("balances")
+    fun fooBar(): String {
+        return "foo bar"
+    }
+}
