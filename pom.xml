@@ -60,6 +60,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.10.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.mockk</groupId>
+			<artifactId>mockk</artifactId>
+			<version>1.12.4</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -79,12 +91,18 @@
 					</args>
 					<compilerPlugins>
 						<plugin>spring</plugin>
+						<plugin>jpa</plugin>
 					</compilerPlugins>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.jetbrains.kotlin</groupId>
 						<artifactId>kotlin-maven-allopen</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-noarg</artifactId>
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>

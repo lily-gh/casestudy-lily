@@ -13,8 +13,9 @@ import java.time.LocalDateTime
 data class CustomerBalance(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Int? = null,
     val customerId: Int,
     val balance: BigDecimal,
-    val updatedAt: LocalDateTime,
+    val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime? = null,
 )

@@ -15,16 +15,12 @@ import java.time.LocalDateTime
 data class Transaction(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: Int? = null,
     val customerId: Int,
     val amount: BigDecimal,
 
     @Enumerated(EnumType.STRING)
     val type: TransactionType,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime?,
+    val updatedAt: LocalDateTime? = null,
 )
-
-enum class TransactionType {
-    PAY_IN, PAY_OUT, VOIDED
-}
