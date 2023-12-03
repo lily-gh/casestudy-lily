@@ -1,5 +1,7 @@
 package com.lotto24.accountbalanceservice.service
 
+import com.lotto24.accountbalanceservice.exception.TransactionAlreadyVoidedException
+import com.lotto24.accountbalanceservice.exception.TransactionNotFoundException
 import com.lotto24.accountbalanceservice.model.Transaction
 import com.lotto24.accountbalanceservice.model.TransactionType.PAY_IN
 import com.lotto24.accountbalanceservice.model.TransactionType.VOIDED
@@ -91,7 +93,24 @@ internal class TransactionServiceTest {
         every { transactionRepository.findByIdAndCustomerId(transactionId, customerId) } returns existingTransaction
 
         // WHEN
-        assertThrows<IllegalArgumentException> {
+        assertThrows<TransactionAlreadyVoidedException> {
+            transactionService.voidTransaction(transactionId, customerId)
+        }
+
+        // THEN
+        verify { transactionRepository.save(any()) wasNot Called }
+    }
+
+    @Test
+    fun `should fail to void a transaction if it is not found`() {
+        // GIVEN
+        val customerId = 1
+        val amount = BigDecimal(100.00)
+        val transactionId = 23
+        every { transactionRepository.findByIdAndCustomerId(transactionId, customerId) } returns null
+
+        // WHEN
+        assertThrows<TransactionNotFoundException> {
             transactionService.voidTransaction(transactionId, customerId)
         }
 

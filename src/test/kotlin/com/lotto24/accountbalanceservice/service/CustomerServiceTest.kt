@@ -1,5 +1,8 @@
 package com.lotto24.accountbalanceservice.service
 
+import com.lotto24.accountbalanceservice.exception.AmountCannotBeZeroException
+import com.lotto24.accountbalanceservice.exception.CustomerNotFoundException
+import com.lotto24.accountbalanceservice.exception.NotEnoughFundsException
 import com.lotto24.accountbalanceservice.model.Customer
 import com.lotto24.accountbalanceservice.model.CustomerBalance
 import com.lotto24.accountbalanceservice.model.Transaction
@@ -7,6 +10,7 @@ import com.lotto24.accountbalanceservice.model.TransactionType.PAY_IN
 import com.lotto24.accountbalanceservice.model.TransactionType.VOIDED
 import com.lotto24.accountbalanceservice.repository.CustomerBalanceRepository
 import com.lotto24.accountbalanceservice.repository.CustomerRepository
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -15,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import java.math.BigDecimal
@@ -82,6 +87,58 @@ internal class CustomerServiceTest {
                 },
             )
         }
+    }
+
+    @Test
+    fun `should fail to book money if customer is not found`() {
+        // GIVEN
+        val tenantId = 1
+        val customerExternalId = 100
+        val amount = BigDecimal(200.00)
+        every { customerRepository.findByTenantIdAndExternalId(any(), any()) } returns null
+
+        // WHEN
+        assertThrows<CustomerNotFoundException> {
+            customerService.bookMoney(tenantId, customerExternalId, amount)
+        }
+
+        // THEN
+        verify { transactionService.saveTransaction(any(), any()) wasNot Called }
+        verify { customerBalanceRepository.save(any()) wasNot Called }
+    }
+
+    @Test
+    fun `should fail to book money if amount is zero`() {
+        // GIVEN
+        val tenantId = 1
+        val customerExternalId = 100
+        val amount = BigDecimal.ZERO
+
+        // WHEN
+        assertThrows<AmountCannotBeZeroException> {
+            customerService.bookMoney(tenantId, customerExternalId, amount)
+        }
+
+        // THEN
+        verify { transactionService.saveTransaction(any(), any()) wasNot Called }
+        verify { customerBalanceRepository.save(any()) wasNot Called }
+    }
+
+    @Test
+    fun `should fail to pay out money if customer doesn't have enough funds`() {
+        // GIVEN
+        val tenantId = 1
+        val customerExternalId = 100
+        val amount = BigDecimal(-800.00)
+
+        // WHEN
+        assertThrows<NotEnoughFundsException> {
+            customerService.bookMoney(tenantId, customerExternalId, amount)
+        }
+
+        // THEN
+        verify { transactionService.saveTransaction(any(), any()) wasNot Called }
+        verify { customerBalanceRepository.save(any()) wasNot Called }
     }
 
     @Test

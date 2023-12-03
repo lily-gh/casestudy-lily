@@ -11,7 +11,9 @@ INSERT INTO tenant (id, name, created_at) VALUES
 INSERT INTO customer (id, tenant_id, external_id, created_at) VALUES
 (1, 1,100,NOW()),
 (2, 1,101,NOW()),
-(3, 2,200,NOW());
+(3, 2,100,NOW()),
+(4, 2,101,NOW()),
+(5, 2,200,NOW());
 --rollback delete from customer;
 
 -- changeset lily:07
@@ -31,7 +33,20 @@ INSERT INTO transaction (customer_id, amount, type, created_at, updated_at) VALU
 (3, 700.00, 'PAY_IN', NOW(), null),
 (3, 500.00, 'PAY_IN', NOW(), null),
 (3, -200.00, 'PAY_OUT', NOW(), null),
-(3, -700.00, 'VOIDED', NOW(), NOW());
+(3, -700.00, 'VOIDED', NOW(), NOW()),
+-- customer 4
+(4, 200.00, 'VOIDED', NOW(), NOW()),
+(4, 700.00, 'PAY_IN', NOW(), null),
+(4, 500.00, 'PAY_IN', NOW(), null),
+-- customer 5
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, 100.00, 'PAY_IN', NOW(), null),
+(5, -450.00, 'PAY_OUT', NOW(), null);
 --rollback delete from transaction;
 
 -- changeset lily:08
@@ -39,5 +54,7 @@ INSERT INTO transaction (customer_id, amount, type, created_at, updated_at) VALU
 INSERT INTO customer_balance (customer_id, balance, created_at) VALUES
 (1, 1000.00,NOW()),
 (2, 700.00,NOW()),
-(3, 2000.00,NOW());
+(3, 2000.00,NOW()),
+(4, 1200.00,NOW()),
+(5, 250.00,NOW());
 --rollback delete from customer_balance;
