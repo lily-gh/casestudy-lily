@@ -8,6 +8,8 @@ import com.lotto24.accountbalanceservice.model.TransactionType.PAY_OUT
 import com.lotto24.accountbalanceservice.model.TransactionType.VOIDED
 import com.lotto24.accountbalanceservice.repository.TransactionRepository
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -39,5 +41,9 @@ class TransactionService(
 
         logger.debug("Voiding transaction {} for customerId {}", transactionId, customerId)
         return transactionRepository.save(transaction.copy(type = VOIDED, updatedAt = LocalDateTime.now()))
+    }
+
+    fun getTransactions(customerId: Int, pageable: Pageable): Page<Transaction> {
+        return transactionRepository.findAllByCustomerId(customerId, pageable)
     }
 }

@@ -1,6 +1,7 @@
 package com.lotto24.accountbalanceservice.service
 
 import com.lotto24.accountbalanceservice.dto.BookMoneyResponse
+import com.lotto24.accountbalanceservice.dto.GetRecentTransactionsResponse
 import com.lotto24.accountbalanceservice.dto.VoidTransactionResponse
 import com.lotto24.accountbalanceservice.exception.AmountCannotBeZeroException
 import com.lotto24.accountbalanceservice.exception.CustomerNotFoundException
@@ -11,6 +12,7 @@ import com.lotto24.accountbalanceservice.repository.CustomerBalanceRepository
 import com.lotto24.accountbalanceservice.repository.CustomerRepository
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -46,6 +48,17 @@ class CustomerService(
         val transaction = transactionService.voidTransaction(transactionId = transactionId, customerId = customer.id)
         val updatedBalance = updateCustomerBalance(currentBalance, transaction.amount.negate())
         return VoidTransactionResponse(updatedBalance.balance)
+    }
+
+    fun getRecentTransactions(tenantId: Int, customerExternalId: Int, pageable: Pageable): GetRecentTransactionsResponse {
+        val customer = getCustomer(tenantId, customerExternalId)
+        val page = transactionService.getTransactions(customer.id, pageable)
+
+        return GetRecentTransactionsResponse(
+            transactions = page.content,
+            page = page.number,
+            totalElements = page.totalElements,
+        )
     }
 
     private fun getCustomer(tenantId: Int, customerExternalId: Int): Customer {
