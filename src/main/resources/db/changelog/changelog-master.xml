@@ -5,4 +5,5 @@
 
     <include file="01-create-tables.sql" relativeToChangelogFile="true"/>
     <include file="02-seed-data.sql" relativeToChangelogFile="true"/>
+    <include file="03-create-audit-log-table.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

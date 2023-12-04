@@ -53,5 +53,8 @@ CREATE TABLE transaction
      updated_at  TIMESTAMP,
      PRIMARY KEY (id),
      FOREIGN KEY (customer_id) REFERENCES customer(id)
-  )
+  );
+
+CREATE INDEX idx_transaction_customer_id
+ ON transaction (customer_id);
 --rollback drop table transaction
