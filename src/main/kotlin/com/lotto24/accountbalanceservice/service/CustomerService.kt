@@ -1,5 +1,6 @@
 package com.lotto24.accountbalanceservice.service
 
+import com.lotto24.accountbalanceservice.dto.AuditPayload
 import com.lotto24.accountbalanceservice.dto.BookMoneyResponse
 import com.lotto24.accountbalanceservice.dto.GetRecentTransactionsResponse
 import com.lotto24.accountbalanceservice.dto.VoidTransactionResponse
@@ -27,7 +28,7 @@ class CustomerService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    fun bookMoney(tenantId: Int, customerExternalId: Int, amount: BigDecimal): BookMoneyResponse {
+    fun bookMoney(tenantId: Int, customerExternalId: Int, amount: BigDecimal, auditPayload: AuditPayload): BookMoneyResponse {
         val customer = getCustomer(tenantId, customerExternalId)
         val currentBalance = getCurrentBalance(customer)
 
@@ -37,16 +38,22 @@ class CustomerService(
         val transaction = transactionService.saveTransaction(customer.id, amount)
         val updatedBalance = updateCustomerBalance(currentBalance, amount)
 
+        auditPayload.add(AuditPayload.Type.TRANSACTION_ID, transaction.id.toString())
+        auditPayload.add(AuditPayload.Type.CUSTOMER_ID, customer.id.toString())
+
         return BookMoneyResponse(transaction.id!!, updatedBalance.balance)
     }
 
     @Transactional
-    fun voidTransaction(tenantId: Int, customerExternalId: Int, transactionId: Int): VoidTransactionResponse {
+    fun voidTransaction(tenantId: Int, customerExternalId: Int, transactionId: Int, auditPayload: AuditPayload): VoidTransactionResponse {
         val customer = getCustomer(tenantId, customerExternalId)
         val currentBalance = getCurrentBalance(customer)
 
         val transaction = transactionService.voidTransaction(transactionId = transactionId, customerId = customer.id)
         val updatedBalance = updateCustomerBalance(currentBalance, transaction.amount.negate())
+
+        auditPayload.add(AuditPayload.Type.CUSTOMER_ID, customer.id.toString())
+
         return VoidTransactionResponse(updatedBalance.balance)
     }
 

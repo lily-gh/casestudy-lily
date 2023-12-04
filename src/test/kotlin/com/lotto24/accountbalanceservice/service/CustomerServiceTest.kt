@@ -1,5 +1,6 @@
 package com.lotto24.accountbalanceservice.service
 
+import com.lotto24.accountbalanceservice.dto.AuditPayload
 import com.lotto24.accountbalanceservice.exception.AmountCannotBeZeroException
 import com.lotto24.accountbalanceservice.exception.CustomerNotFoundException
 import com.lotto24.accountbalanceservice.exception.NotEnoughFundsException
@@ -73,7 +74,7 @@ internal class CustomerServiceTest {
         every { customerBalanceRepository.save(any()) } returns updatedBalance
 
         // WHEN
-        val bookMoneyResponse = customerService.bookMoney(tenantId, customerExternalId, amount)
+        val bookMoneyResponse = customerService.bookMoney(tenantId, customerExternalId, amount, AuditPayload())
 
         // THEN
         assertEquals(updatedAmount, bookMoneyResponse.balance)
@@ -99,7 +100,7 @@ internal class CustomerServiceTest {
 
         // WHEN
         assertThrows<CustomerNotFoundException> {
-            customerService.bookMoney(tenantId, customerExternalId, amount)
+            customerService.bookMoney(tenantId, customerExternalId, amount, AuditPayload())
         }
 
         // THEN
@@ -116,7 +117,7 @@ internal class CustomerServiceTest {
 
         // WHEN
         assertThrows<AmountCannotBeZeroException> {
-            customerService.bookMoney(tenantId, customerExternalId, amount)
+            customerService.bookMoney(tenantId, customerExternalId, amount, AuditPayload())
         }
 
         // THEN
@@ -133,7 +134,7 @@ internal class CustomerServiceTest {
 
         // WHEN
         assertThrows<NotEnoughFundsException> {
-            customerService.bookMoney(tenantId, customerExternalId, amount)
+            customerService.bookMoney(tenantId, customerExternalId, amount, AuditPayload())
         }
 
         // THEN
@@ -164,7 +165,7 @@ internal class CustomerServiceTest {
         every { customerBalanceRepository.save(any()) } returns updatedBalance
 
         // WHEN
-        val voidedTransactionResponse = customerService.voidTransaction(tenantId, customerExternalId, transactionId)
+        val voidedTransactionResponse = customerService.voidTransaction(tenantId, customerExternalId, transactionId, AuditPayload())
 
         // THEN
         verify {
