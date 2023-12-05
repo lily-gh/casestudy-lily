@@ -1,7 +1,7 @@
 package com.lotto24.accountbalanceservice.config
 
 import com.lotto24.accountbalanceservice.dto.AuditPayload
-import com.lotto24.accountbalanceservice.service.AuditSendService
+import com.lotto24.accountbalanceservice.service.AuditLogService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.HandlerMapping
 import org.springframework.web.servlet.ModelAndView
 
 @Component
-class AuditableInterceptor(val auditSendService: AuditSendService) : HandlerInterceptor {
+class AuditableInterceptor(val auditLogService: AuditLogService) : HandlerInterceptor {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -51,7 +51,7 @@ class AuditableInterceptor(val auditSendService: AuditSendService) : HandlerInte
             if (annotation != null) {
                 val payload = request.getAttribute(AUDIT_PAYLOAD) as AuditPayload
 
-                auditSendService.send(
+                auditLogService.send(
                     annotation.type,
                     payload,
                     request.remoteAddr,

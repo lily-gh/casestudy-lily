@@ -2,13 +2,15 @@ package com.lotto24.accountbalanceservice.service
 
 import com.lotto24.accountbalanceservice.config.AuditType
 import com.lotto24.accountbalanceservice.dto.AuditPayload
+import com.lotto24.accountbalanceservice.dto.GetAuditLogsResponse
 import com.lotto24.accountbalanceservice.model.AuditLog
 import com.lotto24.accountbalanceservice.repository.AuditLogRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class AuditSendService(
+class AuditLogService(
     val auditLogRepository: AuditLogRepository,
 ) {
 
@@ -28,5 +30,15 @@ class AuditSendService(
         )
 
         auditLogRepository.save(auditLog)
+    }
+
+    fun getAuditLogs(pageable: Pageable): GetAuditLogsResponse {
+        val page = auditLogRepository.findAll(pageable)
+
+        return GetAuditLogsResponse(
+            auditLogs = page.content,
+            page = page.number,
+            totalElements = page.totalElements,
+        )
     }
 }
