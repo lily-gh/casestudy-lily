@@ -70,7 +70,7 @@ Response body:
 
 
 ### fetch recent transactions by tenant and customer number
-**`GET customercare/tenants/{tenantId}/customers/{customerNumber}/transactions?page={page}}&size={size}`**
+**`GET customercare/tenants/{tenantId}/customers/{customerNumber}/transactions?page={page}&size={size}`**
 
 Request params:
  - **tenantId**: the tenant ID as stored in the database.
@@ -114,7 +114,7 @@ Response body:
 
 
 ### fetch audit logs
-**`GET auditlogs?page={page}}&size={size}`**
+**`GET auditlogs?page={page}&size={size}`**
 
 Request params:
  - **page**: which page to start listing the records from.
@@ -245,7 +245,7 @@ _Note: some columns have been omitted (e.g. `created_at`, `updated_at`)_
  ## Accessing postgres directly
  To access the psql console directly, first find out what is the **container id** for the database with `docker ps`:
  ```bash
-docker ps                                     KILL ✘  13m 41s   9.72G  
+docker ps
 CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS          PORTS                                            NAMES
 ff97206fe32e   accountbalanceservice-app   "/__cacert_entrypoin…"   46 seconds ago   Up 46 seconds   0.0.0.0:8000->8000/tcp, 0.0.0.0:8080->8080/tcp   accountbalanceservice-app-1
 d811c75f8a03   postgres:16.1               "docker-entrypoint.s…"   46 seconds ago   Up 46 seconds   0.0.0.0:5432->5432/tcp                           accountbalanceservice-database-1
